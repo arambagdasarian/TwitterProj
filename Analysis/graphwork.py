@@ -1,15 +1,7 @@
-#!/usr/bin/env python3
-"""
-top_hashtag_pairs_clean.py  (filtered & Top-10)
-----------------------------------------------
-Creates a bar chart of meaningful co-mentioned hashtag pairs,
-excluding a hand-curated list of noisy combos.
-"""
 
 import pandas as pd, ast, re, itertools, matplotlib.pyplot as plt
 from collections import Counter
 
-# ---------- CONFIG --------------------------------------------------
 CSV_PATHS = [
     "Data/Russia_invade.csv",
     "Data/Russian_border_Ukraine.csv",
@@ -20,6 +12,7 @@ CSV_PATHS = [
     "Data/Ukraine_troops.csv",
     "Data/Ukraine_war.csv",
 ]
+
 TOP_N     = 10      # chart 10 pairs
 MIN_PAIR  = 3       # co-mention threshold
 OUT_PNG   = "top_pairs_bar.png"
@@ -37,7 +30,9 @@ DROP_PAIRS = {
     frozenset(("bluetsunami2022", "fbr")),
     frozenset(("fjb", "letsgobrandon")),
 }
-# -------------------------------------------------------------------
+
+
+
 
 tag_re    = re.compile(r"#(\w{2,})")
 bad_tokens= {"none", "true", "false", "nan"}
@@ -53,7 +48,9 @@ def extract_tags(cell) -> list[str]:
             pass
     return [m.lower() for m in tag_re.findall(s)]
 
-# ---------- COUNT PAIRS --------------------------------------------
+
+
+
 pair_counts = Counter()
 
 for path in CSV_PATHS:
@@ -69,7 +66,9 @@ for path in CSV_PATHS:
                     continue
                 pair_counts[key] += 1
 
-# keep ≥ MIN_PAIR and pick top-N
+
+
+
 pair_counts = {p: c for p, c in pair_counts.items() if c >= MIN_PAIR}
 top_pairs   = Counter(pair_counts).most_common(TOP_N)
 if not top_pairs:
@@ -78,7 +77,11 @@ if not top_pairs:
 pairs, counts = zip(*top_pairs)
 labels = [f"#{tuple(p)[0]}  +  #{tuple(p)[1]}" for p in pairs]
 
-# ---------- PLOT ----------------------------------------------------
+
+
+
+# plotting
+
 plt.figure(figsize=(10, 6))
 bars = plt.barh(range(len(labels)), counts, color="steelblue")
 plt.yticks(range(len(labels)), labels, fontsize=9)
